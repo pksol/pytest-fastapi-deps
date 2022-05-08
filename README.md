@@ -185,7 +185,7 @@ Install requirements:
 make install
 ```
 
-Pre-commit hooks coulb be installed after `git init` via
+Pre-commit hooks could be installed after `git init` via
 
 ```bash
 make pre-commit-install
@@ -215,7 +215,7 @@ make check-codestyle
 
 > Note: `check-codestyle` uses `isort`, `black` and `darglint` library
 
-Update all dev libraries to the latest version using one comand
+Update all dev libraries to the latest version using one command
 
 ```bash
 make update-dev-deps
