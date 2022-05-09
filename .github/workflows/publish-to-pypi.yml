@@ -40,7 +40,9 @@ jobs:
           pip install -i https://test.pypi.org/simple/ pytest-fastapi-deps
           python -m pytest -vvv -k "test_public_api"
           export INSTALLED=`pip freeze | grep pytest-fastapi-deps`
+          echo "installed is: $INSTALLED"
           export EXPECTED=`poetry version --short`
+          echo "expected is: $EXPECTED"
           if [ "${INSTALLED:23}" != "$EXPECTED" ]; then exit 1; fi
 
   build-and-publish-production:
@@ -79,5 +81,7 @@ jobs:
           pip install pytest-mock-generator
           python -m pytest -vvv -k "test_public_api"
           export INSTALLED=`pip freeze | grep pytest-mock-generator`
+          echo "installed is: $INSTALLED"
           export EXPECTED=`poetry version --short`
+          echo "expected is: $EXPECTED"
           if [ "${INSTALLED:23}" != "$EXPECTED" ]; then exit 1; fi
