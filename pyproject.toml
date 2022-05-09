@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-fastapi-deps"
-version = "0.1.0"
+version = "0.1.1"
 description = "A fixture which allows easy replacement of fastapi dependencies for testing"
 readme = "README.md"
 authors = ["Peter Kogan <kogan.peter@gmail.com>"]
@@ -125,6 +125,7 @@ warn_unused_ignores = true
 # Directories that are not visited by pytest collector:
 norecursedirs =["hooks", "*.egg", ".eggs", "dist", "build", "docs", ".tox", ".git", "__pycache__"]
 doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
+pytester_example_dir = "tests/examples"
 
 # Extra options:
 addopts = [
