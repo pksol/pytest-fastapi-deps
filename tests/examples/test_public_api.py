@@ -57,11 +57,15 @@ def test_get_override_unrelated_dep(fastapi_dep):
         }
 
 
+def my_second_override():
+    return {"another": "override"}
+
+
 def test_get_override_two_dep(fastapi_dep):
     with fastapi_dep(app).override(
         {
             first_dep: lambda: {"my": "override"},
-            second_dep: lambda: {"another": "override"},
+            second_dep: my_second_override,
         }
     ):
         response = client.get("/depends")
