@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-fastapi-deps"
-version = "0.1.4"
+version = "0.1.5"
 description = "A fixture which allows easy replacement of fastapi dependencies for testing"
 readme = "README.md"
 authors = ["Peter Kogan <kogan.peter@gmail.com>"]
@@ -18,16 +18,18 @@ keywords = []  #! Update me
 
 # Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [  #! Update me
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
-  "Operating System :: OS Independent",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Topic :: Software Development :: Testing",
+  "Framework :: Pytest",
+  "License :: OSI Approved :: MIT License",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
 ]
 
 [tool.poetry.plugins.pytest11]
