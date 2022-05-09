@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-fastapi-deps"
-version = "0.1.0"
+version = "0.1.4"
 description = "A fixture which allows easy replacement of fastapi dependencies for testing"
 readme = "README.md"
 authors = ["Peter Kogan <kogan.peter@gmail.com>"]
@@ -27,14 +27,19 @@ classifiers = [  #! Update me
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
 ]
 
-
+[tool.poetry.plugins.pytest11]
+pytest_fastapi_deps = "pytest_fastapi_deps"
 
 [tool.poetry.dependencies]
 python = "^3.7"
 importlib_metadata = {version = "^4.5.0", python = "<3.8"}
 click = "<8.1"
+fastapi = "*"
+pytest = "*"
+
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.1"
 black = {version = "^21.10b0", allow-prereleases = true}
@@ -120,6 +125,7 @@ warn_unused_ignores = true
 # Directories that are not visited by pytest collector:
 norecursedirs =["hooks", "*.egg", ".eggs", "dist", "build", "docs", ".tox", ".git", "__pycache__"]
 doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
+pytester_example_dir = "tests/examples"
 
 # Extra options:
 addopts = [

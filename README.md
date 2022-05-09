@@ -11,7 +11,6 @@
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pksol/pytest-fastapi-deps/blob/master/.pre-commit-config.yaml)
 [![Semantic Versions](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--versions-e10079.svg)](https://github.com/pksol/pytest-fastapi-deps/releases)
 [![License](https://img.shields.io/github/license/pksol/pytest-fastapi-deps)](https://github.com/pksol/pytest-fastapi-deps/blob/master/LICENSE)
-![Coverage Report](assets/images/coverage.svg)
 
 A fixture which allows easy replacement of fastapi dependencies for testing
 
@@ -29,7 +28,145 @@ or install with `Poetry`
 poetry add pytest-fastapi-deps
 ```
 
+## Use case
+Suppose that you have this fastapi endpoint which has a couple of dependencies:
+```python
+from fastapi import Depends, FastAPI
 
+app = FastAPI()
+
+
+async def first_dep():
+    return {"skip": 0, "limit": 100}
+
+
+def second_dep():
+    return {"skip": 20, "limit": 50}
+
+
+@app.get("/depends/")
+async def get_depends(
+    first_dep: dict = Depends(first_dep), second_dep: dict = Depends(second_dep)
+):
+    return {"first_dep": first_dep, "second_dep": second_dep}
+```
+
+For simplicity, this example holds static dictionaries, but in reality these 
+dependencies can be anything: dynamic configuration, database information, the 
+current user's information, etc.
+
+If you want to test your fastapi endpoint you might wish to mock or replace these 
+dependencies with your test code.
+
+This is where the `fastapi_dep` fixture comes to play.
+
+## Usage
+The most basic usage is to replace a dependency with a context manager:
+
+```python
+from my_project.main import app, first_dep, second_dep
+from fastapi.testclient import TestClient
+
+client = TestClient(app)
+
+def my_second_override():
+    return {"another": "override"}
+
+
+def test_get_override_two_dep(fastapi_dep):
+    with fastapi_dep(app).override(
+        {
+            first_dep: lambda: {"my": "override"},
+            second_dep: my_second_override,
+        }
+    ):
+        response = client.get("/depends")
+        assert response.status_code == 200
+        assert response.json() == {
+            "first_dep": {"my": "override"},
+            "second_dep": {"another": "override"},
+        }
+```
+
+Note how easy it is: you add the `fastapi_dep` fixture, initialize it with the fastapi
+`app` and send a dictionary of overrides: the keys are the original functions while the 
+values are replacement functions.
+
+If your use case is to replace the dependencies for the entire duration of your test,
+you can use pytest [indirect parameters](https://docs.pytest.org/en/latest/example/parametrize.html#indirect-parametrization) to simplify the body of your test:
+
+```python
+import pytest
+
+from my_project.main import app, first_dep, second_dep
+from fastapi.testclient import TestClient
+
+client = TestClient(app)
+
+@pytest.mark.parametrize(
+    "fastapi_dep",
+    [
+        (
+            app,
+            {first_dep: lambda: {"my": "override"}},
+        )
+    ],
+    indirect=True,
+)
+def test_get_override_indirect_dep_param(fastapi_dep):
+    response = client.get("/depends")
+    assert response.status_code == 200
+    assert response.json() == {
+        "first_dep": {"my": "override"},
+        "second_dep": {"skip": 20, "limit": 50},
+    }
+```
+You must use `indirect=True` and pass a tuple where the first item is the `app` and the
+second item is the dictionary with replacement functions.
+
+You can do more fancy stuff and utilize the nature of nested python context managers:
+
+```python
+from my_project.main import app, first_dep, second_dep
+from fastapi.testclient import TestClient
+
+client = TestClient(app)
+
+
+def test_get_override_dep_inner_context(fastapi_dep):
+    with fastapi_dep(app).override({first_dep: lambda: {"my": "override"}}):
+        response = client.get("/depends")
+        assert response.status_code == 200
+        assert response.json() == {
+            "first_dep": {"my": "override"},  # overridden 
+            "second_dep": {"skip": 20, "limit": 50},  # stayed the same
+        }
+
+        # add another override
+        with fastapi_dep(app).override({second_dep: lambda: {"another": "override"}}):
+            response = client.get("/depends")
+            assert response.status_code == 200
+            assert response.json() == {
+                "first_dep": {"my": "override"},  # overridden 
+                "second_dep": {"another": "override"},  # overridden 
+            }
+
+        # second override is gone - expect that only the first is overridden
+        response = client.get("/depends")
+        assert response.status_code == 200
+        assert response.json() == {
+            "first_dep": {"my": "override"},  # overridden 
+            "second_dep": {"skip": 20, "limit": 50},  # returned to normal behaviour 
+        }
+
+    # back to normal behaviour
+    response = client.get("/depends")
+    assert response.status_code == 200
+    assert response.json() == {
+        "first_dep": {"skip": 0, "limit": 100},
+        "second_dep": {"skip": 20, "limit": 50},
+    }
+```
 
 ## 📈 Releases
 
