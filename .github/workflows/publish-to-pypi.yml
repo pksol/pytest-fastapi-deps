@@ -78,9 +78,9 @@ jobs:
         run: |
           poetry export --dev --without-hashes -f requirements.txt --output test-requirements.txt
           pip install -r test-requirements.txt
-          pip install pytest-mock-generator
+          pip install pytest-fastapi-deps
           python -m pytest -vvv -k "test_public_api"
-          export INSTALLED=`pip freeze | grep pytest-mock-generator`
+          export INSTALLED=`pip freeze | grep pytest-fastapi-deps`
           echo "installed is: $INSTALLED, and we care about ${INSTALLED:21}"
           export EXPECTED=`poetry version --short`
           echo "expected is: $EXPECTED"
