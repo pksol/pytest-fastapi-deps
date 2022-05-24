@@ -42,6 +42,16 @@ def test_get_override_single_dep(fastapi_dep):
         }
 
 
+def test_get_override_single_dep_plain_object(fastapi_dep):
+    with fastapi_dep(app).override({first_dep: "override"}):
+        response = client.get("/depends")
+        assert response.status_code == 200
+        assert response.json() == {
+            "first_dep": "override",
+            "second_dep": {"skip": 20, "limit": 50},
+        }
+
+
 def test_get_override_unrelated_dep(fastapi_dep):
     with fastapi_dep(app).override(
         {
