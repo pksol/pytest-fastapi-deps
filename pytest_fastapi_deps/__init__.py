@@ -51,8 +51,12 @@ class DependencyOverrider:
             if dep in self._app.dependency_overrides:
                 # Save existing overrides
                 self._old_overrides[dep] = self._app.dependency_overrides[dep]
-            self._app.dependency_overrides[dep] = new_dep
+            self._app.dependency_overrides[dep] = self._callable_replacement(new_dep)
         return self
+
+    @staticmethod
+    def _callable_replacement(new_dep):
+        return new_dep if callable(new_dep) else lambda: new_dep
 
     def __exit__(self, *args: typing.Any) -> None:
         for dep in self.overrides.keys():

@@ -19,7 +19,7 @@ A fixture which allows easy replacement of fastapi dependencies for testing
 ## Installation
 
 ```bash
-pip install -U pytest-fastapi-deps
+pip install pytest-fastapi-deps
 ```
 
 or install with `Poetry`
@@ -76,21 +76,22 @@ def my_second_override():
 def test_get_override_two_dep(fastapi_dep):
     with fastapi_dep(app).override(
         {
-            first_dep: lambda: {"my": "override"},
+            first_dep: "plain_override_object",
             second_dep: my_second_override,
         }
     ):
         response = client.get("/depends")
         assert response.status_code == 200
         assert response.json() == {
-            "first_dep": {"my": "override"},
+            "first_dep": "plain_override_object",
             "second_dep": {"another": "override"},
         }
 ```
 
 Note how easy it is: you add the `fastapi_dep` fixture, initialize it with the fastapi
 `app` and send a dictionary of overrides: the keys are the original functions while the 
-values are replacement functions.
+values are plain objects that would be returned or replacement functions that would be 
+called.
 
 If your use case is to replace the dependencies for the entire duration of your test,
 you can use pytest [indirect parameters](https://docs.pytest.org/en/latest/example/parametrize.html#indirect-parametrization) to simplify the body of your test:
