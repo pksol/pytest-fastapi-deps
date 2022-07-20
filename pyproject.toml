@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-fastapi-deps"
-version = "0.2.2"
+version = "0.2.3"
 description = "A fixture which allows easy replacement of fastapi dependencies for testing"
 readme = "README.md"
 authors = ["Peter Kogan <kogan.peter@gmail.com>"]
@@ -14,10 +14,16 @@ repository = "https://github.com/pksol/pytest-fastapi-deps"
 homepage = "https://github.com/pksol/pytest-fastapi-deps"
 
 # Keywords description https://python-poetry.org/docs/pyproject/#keywords
-keywords = []  #! Update me
+keywords = [
+  "pytest",
+  "fastapi",
+  "dependencies",
+  "testing",
+  "fixtures",
+]
 
 # Pypi classifiers: https://pypi.org/classifiers/
-classifiers = [  #! Update me
+classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.7",
